@@ -1,0 +1,10 @@
+{
+	"admin/services/subflow": {
+		"title": "SubFlow",
+		"order": 90,
+		"action": {
+			"type": "view",
+			"path": "services/subflow"
+		}
+	}
+}

@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "SubFlow"
+msgstr "SubFlow"
+
+msgid "Self-hosted subscription management and node processing platform."
+msgstr "自托管的订阅管理与节点处理平台。"

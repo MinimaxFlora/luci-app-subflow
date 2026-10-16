@@ -1,0 +1,65 @@
+name: Build Packages
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ "*" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}-${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # OpenWrt 24.10 uses opkg and produces .ipk; OpenWrt 25.12 uses apk and
+        # produces .apk. The SDK container for each tag carries the matching
+        # package manager, so both formats come out of the same workflow.
+        tag:
+          - openwrt-24.10
+          - openwrt-25.12
+        arch:
+          - x86_64
+          - aarch64_cortex-a53
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build packages
+        uses: sbwml/openwrt-gh-action-sdk@go1.27
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
+          FEEDNAME: packages_ci
+          PACKAGES: subflow luci-app-subflow
+          NO_REFRESH_CHECK: true
+
+      - name: Pack packages
+        run: |
+          tar -zcvf "${{ matrix.arch }}-${{ matrix.tag }}.tar.gz" \
+            -C "bin/packages/${{ matrix.arch }}" packages_ci
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.arch }}-${{ matrix.tag }}
+          path: ${{ matrix.arch }}-${{ matrix.tag }}.tar.gz
+          if-no-files-found: error
+
+      - name: Attach packages to the release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
+          prerelease: false
+          artifacts: "${{ matrix.arch }}-${{ matrix.tag }}.tar.gz"

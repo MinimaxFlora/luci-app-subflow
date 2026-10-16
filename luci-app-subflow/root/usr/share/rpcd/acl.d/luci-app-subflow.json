@@ -1,0 +1,11 @@
+{
+	"luci-app-subflow": {
+		"description": "Grant access to the SubFlow configuration",
+		"read": {
+			"uci": [ "subflow" ]
+		},
+		"write": {
+			"uci": [ "subflow" ]
+		}
+	}
+}
