@@ -40,26 +40,16 @@ return view.extend({
 	/* rpcd only emits a procd config.change event after applying UCI, and the
 	 * procd reload trigger only fires for services it already knows about. Right
 	 * after installing, SubFlow has never started, so enabling it would do
-	 * nothing. Reload explicitly, but only after the committed value matches the
-	 * form target so the reload never races the asynchronous apply. */
+	 * nothing. Reload explicitly instead. The apply request only stages the UCI
+	 * changes at this point, so give the local commit a moment to land before
+	 * reloading, otherwise the init script would read the previous values. */
 	handleSaveApply: function (ev, mode) {
 		return this.handleSave(ev).then(function () {
 			ui.changes.apply(mode == '0');
 
-			var target = uci.get('subflow', 'main', 'enabled');
-			var tries = 0;
-
-			(function resync() {
-				tries++;
-				uci.load('subflow').then(function () {
-					if (uci.get('subflow', 'main', 'enabled') === target || tries >= 20)
-						fs.exec('/etc/init.d/subflow', [ 'reload' ]).catch(function () {});
-					else
-						window.setTimeout(resync, 500);
-				}).catch(function () {
-					window.setTimeout(resync, 500);
-				});
-			})();
+			window.setTimeout(function () {
+				fs.exec('/etc/init.d/subflow', [ 'reload' ]).catch(function () {});
+			}, 1000);
 		});
 	},
 
