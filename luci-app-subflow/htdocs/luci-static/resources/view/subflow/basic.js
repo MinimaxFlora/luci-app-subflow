@@ -1,7 +1,6 @@
 'use strict';
-'require dom';
-'require fs';
 'require form';
+'require fs';
 'require poll';
 'require rpc';
 'require uci';
@@ -15,13 +14,14 @@ const callServiceList = rpc.declare({
 	expect: { '': {} }
 });
 
-/* procd only names the instance "subflow" when the init script passes a name,
- * otherwise it falls back to "instance1". Match on any running instance so the
- * status is reported correctly regardless of the instance name. */
+/* procd names the instance "instance1" when the init script calls
+ * procd_open_instance without an explicit name, so match any running instance
+ * instead of assuming a fixed key. */
 function getServiceStatus() {
 	return L.resolveDefault(callServiceList('subflow'), {}).then(function (res) {
 		try {
 			var instances = res.subflow.instances || {};
+
 			return Object.keys(instances).some(function (name) {
 				return instances[name].running === true;
 			});
@@ -32,17 +32,27 @@ function getServiceStatus() {
 	});
 }
 
+function renderStatus(running, port) {
+	var span = '<span style="color:%s"><strong>%s</strong></span>';
+
+	if (!running)
+		return span.format('red', _('SubFlow is not running'));
+
+	var link = String.format(
+		'&#160;<a class="btn cbi-button cbi-button-action" href="http://%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
+		window.location.hostname, port, _('Open Web Interface'));
+
+	return span.format('green', _('SubFlow is running')) + link;
+}
+
 return view.extend({
 	load: function () {
 		return uci.load('subflow');
 	},
 
-	/* rpcd only emits a procd config.change event after applying UCI, and the
-	 * procd reload trigger only fires for services it already knows about. Right
-	 * after installing, SubFlow has never started, so enabling it would do
-	 * nothing. Reload explicitly instead. The apply request only stages the UCI
-	 * changes at this point, so give the local commit a moment to land before
-	 * reloading, otherwise the init script would read the previous values. */
+	/* Reload the service right after applying: the rpcd config.change trigger
+	 * only reaches services procd already knows about, so a freshly installed
+	 * SubFlow would never start from the enable toggle alone. */
 	handleSaveApply: function (ev, mode) {
 		return this.handleSave(ev).then(function () {
 			ui.changes.apply(mode == '0');
@@ -59,45 +69,22 @@ return view.extend({
 		m = new form.Map('subflow', _('SubFlow'),
 			_('Self-hosted subscription management and node processing platform.'));
 
-		var statusP = E('p', { 'id': 'subflow_status' },
-			E('em', _('Collecting data...')));
-		var lastRunning = null;
-
-		function buildStatus(running) {
-			if (!running)
-				return E([ E('em', [ E('b', { 'style': 'color:red' }, _('SubFlow is not running')) ]) ]);
-
-			var port = uci.get('subflow', 'main', 'port') || '8080';
-			var url = window.location.protocol + '//' + window.location.hostname + ':' + port;
-
-			return E([
-				E('em', [ E('b', { 'style': 'color:green' }, _('SubFlow is running')) ]),
-				' ',
-				E('a', {
-					'class': 'cbi-button cbi-button-action',
-					'href': url,
-					'target': '_blank',
-					'rel': 'noopener noreferrer'
-				}, [ _('Open Web Interface') ])
-			]);
-		}
-
 		s = m.section(form.TypedSection);
 		s.anonymous = true;
-		s.render = () => {
-			setTimeout(function () {
-				poll.add(function () {
-					return getServiceStatus().then(function (running) {
-						if (running === lastRunning)
-							return;
+		s.render = function () {
+			poll.add(function () {
+				return getServiceStatus().then(function (running) {
+					var el = document.getElementById('subflow_status');
 
-						lastRunning = running;
-						dom.content(statusP, buildStatus(running));
-					});
-				}, 3);
-			}, 100);
+					if (el)
+						el.innerHTML = renderStatus(running,
+							uci.get('subflow', 'main', 'port') || '8080');
+				});
+			}, 3);
 
-			return E('div', { 'class': 'cbi-section' }, [ statusP ]);
+			return E('div', { 'class': 'cbi-section' }, [
+				E('p', { 'id': 'subflow_status' }, _('Collecting data...'))
+			]);
 		};
 
 		s = m.section(form.NamedSection, 'main', 'subflow');
