@@ -3,12 +3,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Allow Private Hosts"
-msgstr ""
-
-msgid "Allow fetching subscriptions from private network addresses. Disabled by default to avoid SSRF."
-msgstr ""
-
 msgid "Basic Setting"
 msgstr ""
 
@@ -18,34 +12,25 @@ msgstr ""
 msgid "Data Directory"
 msgstr ""
 
-msgid "Debug"
-msgstr ""
-
 msgid "Directory used to persist SubFlow data."
 msgstr ""
 
-msgid "Error"
+msgid "Enable"
 msgstr ""
 
-msgid "Fetch User-Agent"
-msgstr ""
-
-msgid "Info"
-msgstr ""
-
-msgid "Listen Address"
-msgstr ""
-
-msgid "Listen Port"
-msgstr ""
-
-msgid "Log Level"
+msgid "Enable SubFlow and start it automatically on boot."
 msgstr ""
 
 msgid "Logs"
 msgstr ""
 
-msgid "Restart"
+msgid "No log data."
+msgstr ""
+
+msgid "Port used by the SubFlow web interface."
+msgstr ""
+
+msgid "Self-hosted subscription management and node processing platform."
 msgstr ""
 
 msgid "SubFlow"
@@ -60,23 +45,8 @@ msgstr ""
 msgid "SubFlow is running"
 msgstr ""
 
-msgid "Self-hosted subscription management and node processing platform."
+msgid "The syslog output, pre-filtered for messages related to SubFlow."
 msgstr ""
 
-msgid "Start"
-msgstr ""
-
-msgid "Start enables SubFlow and starts it automatically on boot."
-msgstr ""
-
-msgid "Stop"
-msgstr ""
-
-msgid "Unable to apply changes."
-msgstr ""
-
-msgid "User-Agent sent when fetching remote subscriptions. Leave it empty to use the built-in default."
-msgstr ""
-
-msgid "Warning"
+msgid "Web Admin Port"
 msgstr ""

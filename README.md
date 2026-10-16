@@ -12,15 +12,14 @@ SubFlow is a single Go binary that serves both its API and an embedded Vue
 frontend on one port. The package runs it as a procd service and adds a LuCI
 page with two tabs:
 
-- **Basic Setting** shows the service state with Start / Stop / Restart
-  buttons and edits the listen address, port, log level, data directory and
-  subscription-fetch options.
+- **Basic Setting** shows the service state and edits the enable switch, the
+  web admin port and the data directory.
 - **Logs** shows the syslog output filtered to the `subflow` tag.
 
-The service starts disabled (`enabled '0'`). Press **Start** to enable it; the
-setting is persisted, so SubFlow is then started automatically on boot. The
-SubFlow web interface is served by the service itself on its own port, so open
-it directly in a browser:
+The service starts disabled (`enabled '0'`). Turn on **Enable** and press
+**Save & Apply** to enable it; the setting is persisted, so SubFlow is then
+started automatically on boot. The SubFlow web interface is served by the
+service itself on its own port, so open it directly in a browser:
 
 ```
    browser
@@ -108,23 +107,30 @@ Runtime settings live in `/etc/config/subflow`:
 
 | Option | Default | Meaning |
 | ------ | ------- | ------- |
-| `enabled` | `0` | Start the service now and on boot (set by the Start / Stop buttons) |
-| `host` | `0.0.0.0` | Listen address |
-| `port` | `8080` | Listen port of the SubFlow web UI |
+| `enabled` | `0` | Start the service now and on boot (set by the **Enable** switch) |
+| `port` | `8080` | Web admin port of the SubFlow UI |
 | `data_dir` | `/etc/subflow` | Persistent data and `subflow.db` |
+
+The Basic Setting page writes `enabled`, `port` and `data_dir` through UCI. The
+following advanced options are honoured by the init script but are not shown in
+the UI; set them with `uci set` if needed:
+
+| Option | Default | Meaning |
+| ------ | ------- | ------- |
+| `host` | `0.0.0.0` | Listen address |
 | `log_level` | `info` | `debug`, `info`, `warn` or `error` |
 | `fetch_user_agent` | (empty) | User-Agent for remote subscription fetches |
 | `fetch_allow_private_hosts` | `0` | Allow fetching from private addresses |
 
-The Basic Setting page writes these options through UCI. Use **Save & Apply**
-to persist a change and restart a running service.
+Use **Save & Apply** to persist a change and restart a running service.
 
 ```sh
 /etc/init.d/subflow restart
 ```
 
 Keep `host` on `0.0.0.0` so the web UI is reachable from your computer; a
-service bound to `127.0.0.1` is only reachable from the router itself.
+service bound to `127.0.0.1` is only reachable from the router itself. It is
+not exposed in the UI to keep the Basic Setting page minimal.
 
 ## Access
 

@@ -4,11 +4,9 @@
 		"read": {
 			"file": {
 				"/sbin/logread": [ "exec" ],
-				"/usr/sbin/logread": [ "exec" ],
-				"/usr/libexec/syslog-wrapper": [ "exec" ]
+				"/usr/sbin/logread": [ "exec" ]
 			},
 			"ubus": {
-				"log": [ "read" ],
 				"service": [ "list" ]
 			},
 			"uci": [ "subflow" ]
