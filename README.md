@@ -3,35 +3,38 @@
 OpenWrt LuCI integration for [SubFlow](https://github.com/MinimaxFlora/SubFlow),
 a self-hosted subscription management and node processing platform.
 
-The package runs the SubFlow binary as a procd service and exposes its web
-interface inside LuCI under **Services > SubFlow**.
+The package runs the SubFlow binary as a procd service and provides a
+management page inside LuCI under **Services > SubFlow**.
 
 ## How it works
 
 SubFlow is a single Go binary that serves both its API and an embedded Vue
-frontend on one port. The LuCI page does not proxy anything through uhttpd:
-it simply embeds the running service in an iframe.
+frontend on one port. The package runs it as a procd service and adds a LuCI
+page with two tabs:
+
+- **Basic Setting** shows the service state with Start / Stop / Restart
+  buttons and edits the listen address, port, log level, data directory and
+  subscription-fetch options.
+- **Logs** shows the syslog output filtered to the `subflow` tag.
+
+The service starts disabled (`enabled '0'`). Press **Start** to enable it; the
+setting is persisted, so SubFlow is then started automatically on boot. The
+SubFlow web interface is served by the service itself on its own port, so open
+it directly in a browser:
 
 ```
-        browser
-           |
-   +-------+---------------------------+
-   |                                   |
-   |  LuCI / uhttpd :80                |  SubFlow :8080
-   |  Services > SubFlow               |  API + embedded UI
-   |  <iframe src="//HOST:8080/">  ----+-->  served by subflow
-   |
+   browser
+      |
+      +--> http://<router>/            LuCI :80  -> Services > SubFlow
+      |
+      +--> http://<router>:8080/       SubFlow API + embedded UI
 ```
-
-This is the same shape used by other router web apps such as OpenClash and
-PassWall, and it needs no nginx, no Unix socket and no reverse proxy, because
-uhttpd does not provide one.
 
 ## Repository layout
 
 ```
 subflow/              the subflow binary package
-luci-app-subflow/     the LuCI application (menu entry and iframe page)
+luci-app-subflow/     the LuCI application (menu entry, Basic Setting and Logs views)
 .github/workflows/    the SDK build workflow
 ```
 
@@ -105,34 +108,33 @@ Runtime settings live in `/etc/config/subflow`:
 
 | Option | Default | Meaning |
 | ------ | ------- | ------- |
-| `enabled` | `1` | Start the service on boot |
+| `enabled` | `0` | Start the service now and on boot (set by the Start / Stop buttons) |
 | `host` | `0.0.0.0` | Listen address |
-| `port` | `8080` | Listen port, also used by the LuCI iframe |
+| `port` | `8080` | Listen port of the SubFlow web UI |
 | `data_dir` | `/etc/subflow` | Persistent data and `subflow.db` |
 | `log_level` | `info` | `debug`, `info`, `warn` or `error` |
 | `fetch_user_agent` | (empty) | User-Agent for remote subscription fetches |
 | `fetch_allow_private_hosts` | `0` | Allow fetching from private addresses |
 
-After changing the port, the LuCI page reads the new value automatically.
+The Basic Setting page writes these options through UCI. Use **Save & Apply**
+to persist a change and restart a running service.
 
 ```sh
 /etc/init.d/subflow restart
 ```
 
-`host` stays `0.0.0.0` because the iframe is loaded by your browser: a service
-bound to `127.0.0.1` on the router would be unreachable from your computer.
+Keep `host` on `0.0.0.0` so the web UI is reachable from your computer; a
+service bound to `127.0.0.1` is only reachable from the router itself.
 
 ## Access
 
-SubFlow has no built-in login and the LuCI page relies on LuCI's own
-authentication. Keep the port on the LAN only; do not expose it to the WAN
-(no firewall rule is installed by this package).
+SubFlow has no built-in login. Keep the port on the LAN only; do not expose it
+to the WAN (no firewall rule is installed by this package).
 
 ## Notes
 
-The LuCI page uses a protocol-relative URL (`//host:port/`), which requires the
-LuCI session to be plain HTTP. If you serve LuCI over HTTPS, open SubFlow
-directly in a new tab instead of the iframe.
+The Logs tab reads the system log and filters it by the `subflow` tag, which
+matches the tag used by procd for the service output.
 
 ## License
 

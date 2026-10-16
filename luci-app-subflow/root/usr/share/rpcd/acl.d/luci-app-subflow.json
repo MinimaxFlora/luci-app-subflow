@@ -2,6 +2,15 @@
 	"luci-app-subflow": {
 		"description": "Grant access to the SubFlow configuration",
 		"read": {
+			"file": {
+				"/sbin/logread": [ "exec" ],
+				"/usr/sbin/logread": [ "exec" ],
+				"/usr/libexec/syslog-wrapper": [ "exec" ]
+			},
+			"ubus": {
+				"log": [ "read" ],
+				"service": [ "list" ]
+			},
 			"uci": [ "subflow" ]
 		},
 		"write": {

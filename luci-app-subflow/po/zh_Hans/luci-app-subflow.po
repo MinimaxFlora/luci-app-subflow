@@ -3,8 +3,80 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Allow Private Hosts"
+msgstr "允许私有地址"
+
+msgid "Allow fetching subscriptions from private network addresses. Disabled by default to avoid SSRF."
+msgstr "允许从私有网络地址获取订阅。默认关闭以避免 SSRF。"
+
+msgid "Basic Setting"
+msgstr "基本设置"
+
+msgid "Collecting data..."
+msgstr "正在获取数据..."
+
+msgid "Data Directory"
+msgstr "数据目录"
+
+msgid "Debug"
+msgstr "调试"
+
+msgid "Directory used to persist SubFlow data."
+msgstr "用于持久化 SubFlow 数据的目录。"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Fetch User-Agent"
+msgstr "抓取 User-Agent"
+
+msgid "Info"
+msgstr "信息"
+
+msgid "Listen Address"
+msgstr "监听地址"
+
+msgid "Listen Port"
+msgstr "监听端口"
+
+msgid "Log Level"
+msgstr "日志级别"
+
+msgid "Logs"
+msgstr "日志"
+
+msgid "Restart"
+msgstr "重启"
+
 msgid "SubFlow"
 msgstr "SubFlow"
 
+msgid "SubFlow Log"
+msgstr "SubFlow 日志"
+
+msgid "SubFlow is not running"
+msgstr "SubFlow 未运行"
+
+msgid "SubFlow is running"
+msgstr "SubFlow 正在运行"
+
 msgid "Self-hosted subscription management and node processing platform."
 msgstr "自托管的订阅管理与节点处理平台。"
+
+msgid "Start"
+msgstr "启动"
+
+msgid "Start enables SubFlow and starts it automatically on boot."
+msgstr "启动会启用 SubFlow，并在开机时自动启动。"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Unable to apply changes."
+msgstr "无法应用更改。"
+
+msgid "User-Agent sent when fetching remote subscriptions. Leave it empty to use the built-in default."
+msgstr "抓取远程订阅时发送的 User-Agent。留空则使用内置默认值。"
+
+msgid "Warning"
+msgstr "警告"

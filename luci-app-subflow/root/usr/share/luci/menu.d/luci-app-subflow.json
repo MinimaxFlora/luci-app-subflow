@@ -3,8 +3,27 @@
 		"title": "SubFlow",
 		"order": 90,
 		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-subflow" ],
+			"uci": { "subflow": true }
+		}
+	},
+	"admin/services/subflow/basic": {
+		"title": "Basic Setting",
+		"order": 10,
+		"action": {
 			"type": "view",
-			"path": "services/subflow"
+			"path": "subflow/basic"
+		}
+	},
+	"admin/services/subflow/logs": {
+		"title": "Logs",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "subflow/logs"
 		}
 	}
 }
