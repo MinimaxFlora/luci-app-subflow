@@ -3,6 +3,7 @@
 		"description": "Grant access to the SubFlow configuration",
 		"read": {
 			"file": {
+				"/etc/init.d/subflow": [ "exec" ],
 				"/sbin/logread": [ "exec" ],
 				"/usr/sbin/logread": [ "exec" ]
 			},

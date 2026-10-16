@@ -12,14 +12,16 @@ SubFlow is a single Go binary that serves both its API and an embedded Vue
 frontend on one port. The package runs it as a procd service and adds a LuCI
 page with two tabs:
 
-- **Basic Setting** shows the service state and edits the enable switch, the
-  web admin port and the data directory.
+- **Basic Setting** shows the service state with an **Open Web Interface**
+  button while running, and edits the enable switch, the web admin port and the
+  data directory.
 - **Logs** shows the syslog output filtered to the `subflow` tag.
 
 The service starts disabled (`enabled '0'`). Turn on **Enable** and press
-**Save & Apply** to enable it; the setting is persisted, so SubFlow is then
-started automatically on boot. The SubFlow web interface is served by the
-service itself on its own port, so open it directly in a browser:
+**Save & Apply** to start it right away; the setting is persisted, so SubFlow
+is then started automatically on boot. An **Open Web Interface** button appears
+next to the status once it runs. The SubFlow web interface is served by the
+service itself on its own port, so it can also be opened directly in a browser:
 
 ```
    browser

@@ -27,6 +27,9 @@ msgstr ""
 msgid "No log data."
 msgstr ""
 
+msgid "Open Web Interface"
+msgstr ""
+
 msgid "Port used by the SubFlow web interface."
 msgstr ""
 

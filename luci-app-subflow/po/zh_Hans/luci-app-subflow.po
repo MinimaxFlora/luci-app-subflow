@@ -27,6 +27,9 @@ msgstr "日志"
 msgid "No log data."
 msgstr "暂无日志。"
 
+msgid "Open Web Interface"
+msgstr "打开网页界面"
+
 msgid "Port used by the SubFlow web interface."
 msgstr "SubFlow 网页界面使用的端口。"
 
